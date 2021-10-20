@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 class PairStringList extends AbstractList<String> {
-    private final static int PARITY_DETERMINANT = 2;
+    private static final int PARITY_DETERMINANT = 2;
     private final List<String> list;
 
     public PairStringList() {

@@ -10,7 +10,7 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 
 class MedianQueue extends AbstractQueue<Integer> {
-    private final static int PARITY_DETERMINANT = 2;
+    private static final int PARITY_DETERMINANT = 2;
     private final Queue<Integer> queue;
 
     public MedianQueue() {
@@ -94,24 +94,7 @@ class MedianQueue extends AbstractQueue<Integer> {
 
     @Override
     public Integer poll() {
-        Queue<Integer> orderedQueue = new PriorityQueue<>(queue);
-        List<Integer> listQueue = new ArrayList<>();
-        while (!orderedQueue.isEmpty()) {
-            listQueue.add(orderedQueue.poll());
-        }
-        List<Integer> medianStorage = new LinkedList<>();
-        int medianIndex;
-        while (!listQueue.isEmpty()) {
-            if (listQueue.size() % PARITY_DETERMINANT == 0) {
-                medianIndex = (listQueue.size() / PARITY_DETERMINANT) - 1;
-            } else {
-                medianIndex = listQueue.size() / PARITY_DETERMINANT;
-            }
-            medianStorage.add(listQueue.get(medianIndex));
-            listQueue.remove(medianIndex);
-        }
-        queue.clear();
-        queue.addAll(medianStorage);
+        findMedian();
         return queue.poll();
     }
 
@@ -123,6 +106,11 @@ class MedianQueue extends AbstractQueue<Integer> {
 
     @Override
     public Integer peek() {
+        findMedian();
+        return queue.peek();
+    }
+
+    public void findMedian() {
         Queue<Integer> orderedQueue = new PriorityQueue<>(queue);
         List<Integer> listQueue = new ArrayList<>();
         while (!orderedQueue.isEmpty()) {
@@ -141,6 +129,5 @@ class MedianQueue extends AbstractQueue<Integer> {
         }
         queue.clear();
         queue.addAll(medianStorage);
-        return queue.peek();
     }
 }
