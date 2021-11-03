@@ -75,7 +75,8 @@ class PairStringList extends AbstractList<String> {
 
     @Override
     public boolean remove(Object o) {
-        return list.remove(o) && list.remove(o);
+        list.remove(o);
+        return list.remove(o);
     }
 
     @Override

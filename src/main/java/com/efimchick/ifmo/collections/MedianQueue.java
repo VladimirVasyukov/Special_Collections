@@ -4,11 +4,11 @@ import java.util.AbstractQueue;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-import java.util.Stack;
 
 class MedianQueue extends AbstractQueue<Integer> {
     private static final int PARITY_DETERMINANT = 2;
@@ -55,7 +55,7 @@ class MedianQueue extends AbstractQueue<Integer> {
 
     @Override
     public Integer remove() {
-        Stack<Integer> stack = new Stack<>();
+        Deque<Integer> stack = new LinkedList<>();
         while (!queue.isEmpty()) {
             stack.add(queue.peek());
             queue.remove();
