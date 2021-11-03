@@ -23,12 +23,12 @@ class PairStringList extends AbstractList<String> {
 
     @Override
     public boolean isEmpty() {
-        return size() == 0;
+        return list.size() == 0;
     }
 
     @Override
     public boolean contains(Object o) {
-        return indexOf(o) >= 0;
+        return list.contains(o);
     }
 
     @Override
@@ -38,12 +38,12 @@ class PairStringList extends AbstractList<String> {
 
     @Override
     public Object[] toArray() {
-        return new Object[0];
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public <T> T[] toArray(T[] a) {
-        return (T[]) list.toArray();
+        return list.toArray(a);
     }
 
     @Override
@@ -66,16 +66,16 @@ class PairStringList extends AbstractList<String> {
 
     @Override
     public String remove(int index) {
-        list.remove(index);
-        list.remove(index - 1);
-        return null;
+        if (index % PARITY_DETERMINANT == 0) {
+            return list.remove(index) + list.remove(index + 1);
+        } else {
+            return list.remove(index) + list.remove(index - 1);
+        }
     }
 
     @Override
     public boolean remove(Object o) {
-        list.remove(o);
-        list.remove(o);
-        return false;
+        return list.remove(o) && list.remove(o);
     }
 
     @Override
@@ -95,18 +95,13 @@ class PairStringList extends AbstractList<String> {
 
     @Override
     public boolean addAll(int index, Collection<? extends String> c) {
-        List<String> str = new ArrayList<>(c);
-        Collections.reverse(str);
-        for (String s : str) {
-            if (index % PARITY_DETERMINANT == 0) {
-                list.add(index, s);
-                list.add(index, s);
-            } else {
-                list.add(index + 1, s);
-                list.add(index + 1, s);
-            }
+        boolean modified = false;
+        Collections.reverse((List<?>) c);
+        for (String e : c) {
+            add(index, e);
+            modified = true;
         }
-        return true;
+        return modified;
     }
 
     @Override
@@ -131,14 +126,12 @@ class PairStringList extends AbstractList<String> {
 
     @Override
     public String set(int index, String element) {
+        String setElement = list.set(index, element);
         if (index % PARITY_DETERMINANT == 0) {
-            list.set(index, element);
-            list.set(index + 1, element);
+            return setElement + list.set(index + 1, element);
         } else {
-            list.set(index, element);
-            list.set(index - 1, element);
+            return setElement + list.set(index - 1, element);
         }
-        return null;
     }
 
     @Override

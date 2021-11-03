@@ -3,11 +3,12 @@ package com.efimchick.ifmo.collections;
 import java.util.AbstractQueue;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.Stack;
 
 class MedianQueue extends AbstractQueue<Integer> {
     private static final int PARITY_DETERMINANT = 2;
@@ -44,7 +45,7 @@ class MedianQueue extends AbstractQueue<Integer> {
 
     @Override
     public <T> T[] toArray(T[] a) {
-        return (T[]) queue.toArray();
+        return queue.toArray(a);
     }
 
     @Override
@@ -54,6 +55,15 @@ class MedianQueue extends AbstractQueue<Integer> {
 
     @Override
     public Integer remove() {
+        Stack<Integer> stack = new Stack<>();
+        while (!queue.isEmpty()) {
+            stack.add(queue.peek());
+            queue.remove();
+        }
+        while (!stack.isEmpty()) {
+            queue.add(stack.peek());
+            stack.pop();
+        }
         return queue.remove();
     }
 
@@ -94,7 +104,7 @@ class MedianQueue extends AbstractQueue<Integer> {
 
     @Override
     public Integer poll() {
-        findMedian();
+        reorderTestQueueWithMedianInHead();
         return queue.poll();
     }
 
@@ -106,28 +116,23 @@ class MedianQueue extends AbstractQueue<Integer> {
 
     @Override
     public Integer peek() {
-        findMedian();
+        reorderTestQueueWithMedianInHead();
         return queue.peek();
     }
 
-    public void findMedian() {
-        Queue<Integer> orderedQueue = new PriorityQueue<>(queue);
-        List<Integer> listQueue = new ArrayList<>();
-        while (!orderedQueue.isEmpty()) {
-            listQueue.add(orderedQueue.poll());
-        }
-        List<Integer> medianStorage = new LinkedList<>();
+    public void reorderTestQueueWithMedianInHead() {
+        List<Integer> sortedList = new ArrayList<>(queue);
+        Collections.sort(sortedList);
         int medianIndex;
-        while (!listQueue.isEmpty()) {
-            if (listQueue.size() % PARITY_DETERMINANT == 0) {
-                medianIndex = (listQueue.size() / PARITY_DETERMINANT) - 1;
+        while (!sortedList.isEmpty()) {
+            if (sortedList.size() % PARITY_DETERMINANT == 0) {
+                medianIndex = (sortedList.size() / PARITY_DETERMINANT) - 1;
             } else {
-                medianIndex = listQueue.size() / PARITY_DETERMINANT;
+                medianIndex = sortedList.size() / PARITY_DETERMINANT;
             }
-            medianStorage.add(listQueue.get(medianIndex));
-            listQueue.remove(medianIndex);
+            queue.remove();
+            queue.add(sortedList.get(medianIndex));
+            sortedList.remove(medianIndex);
         }
-        queue.clear();
-        queue.addAll(medianStorage);
     }
 }

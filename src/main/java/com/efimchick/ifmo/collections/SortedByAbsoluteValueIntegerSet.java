@@ -35,12 +35,12 @@ class SortedByAbsoluteValueIntegerSet extends AbstractSet<Integer> {
 
     @Override
     public Object[] toArray() {
-        return new Object[0];
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public <T> T[] toArray(T[] a) {
-        return (T[]) set.toArray();
+        return set.toArray(a);
     }
 
     @Override
