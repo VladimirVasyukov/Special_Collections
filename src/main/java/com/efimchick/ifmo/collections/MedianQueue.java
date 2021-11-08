@@ -1,31 +1,26 @@
 package com.efimchick.ifmo.collections;
 
 import java.util.AbstractQueue;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
 
 class MedianQueue extends AbstractQueue<Integer> {
     private static final int PARITY_DETERMINANT = 2;
-    private final Queue<Integer> queue;
+    private final LinkedList<Integer> list;
 
     public MedianQueue() {
-        queue = new LinkedList<>();
+        list = new LinkedList<>();
     }
 
     @Override
     public int size() {
-        return queue.size();
+        return list.size();
     }
 
     @Override
     public boolean isEmpty() {
-        return queue.isEmpty();
+        return list.isEmpty();
     }
 
     @Override
@@ -35,7 +30,7 @@ class MedianQueue extends AbstractQueue<Integer> {
 
     @Override
     public Iterator<Integer> iterator() {
-        return queue.iterator();
+        return list.iterator();
     }
 
     @Override
@@ -45,94 +40,80 @@ class MedianQueue extends AbstractQueue<Integer> {
 
     @Override
     public <T> T[] toArray(T[] a) {
-        return queue.toArray(a);
+        return list.toArray(a);
     }
 
     @Override
     public boolean add(Integer integer) {
-        return queue.add(integer);
-    }
-
-    @Override
-    public Integer remove() {
-        Deque<Integer> stack = new LinkedList<>();
-        while (!queue.isEmpty()) {
-            stack.add(queue.peek());
-            queue.remove();
-        }
-        while (!stack.isEmpty()) {
-            queue.add(stack.peek());
-            stack.pop();
-        }
-        return queue.remove();
-    }
-
-    @Override
-    public boolean remove(Object o) {
-        return queue.remove(o);
-    }
-
-    @Override
-    public boolean containsAll(Collection<?> c) {
-        return queue.containsAll(c);
+        return addElement(integer);
     }
 
     @Override
     public boolean addAll(Collection<? extends Integer> c) {
-        return queue.addAll(c);
-    }
-
-    @Override
-    public boolean removeAll(Collection<?> c) {
-        return queue.removeAll(c);
-    }
-
-    @Override
-    public boolean retainAll(Collection<?> c) {
-        return queue.retainAll(c);
-    }
-
-    @Override
-    public void clear() {
-        queue.clear();
+        return list.addAll(c);
     }
 
     @Override
     public boolean offer(Integer integer) {
-        return queue.offer(integer);
+        return addElement(integer);
+    }
+
+    private boolean addElement(Integer value) {
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i) >= value) {
+                list.add(i, value);
+                return true;
+            }
+        }
+        return list.add(value);
+    }
+
+    @Override
+    public Integer remove() {
+        return list.remove();
+    }
+
+    @Override
+    public boolean remove(Object o) {
+        return list.remove(o);
+    }
+
+    @Override
+    public boolean containsAll(Collection<?> c) {
+        return list.containsAll(c);
+    }
+
+    @Override
+    public boolean removeAll(Collection<?> c) {
+        return list.removeAll(c);
+    }
+
+    @Override
+    public boolean retainAll(Collection<?> c) {
+        return list.retainAll(c);
+    }
+
+    @Override
+    public void clear() {
+        list.clear();
+    }
+
+    @Override
+    public Integer element() {
+        return list.element();
     }
 
     @Override
     public Integer poll() {
-        reorderTestQueueWithMedianInHead();
-        return queue.poll();
-    }
-
-
-    @Override
-    public Integer element() {
-        return queue.element();
+        return list.remove(findMedianIndex());
     }
 
     @Override
     public Integer peek() {
-        reorderTestQueueWithMedianInHead();
-        return queue.peek();
+        return list.get(findMedianIndex());
     }
 
-    public void reorderTestQueueWithMedianInHead() {
-        List<Integer> sortedList = new ArrayList<>(queue);
-        Collections.sort(sortedList);
-        int medianIndex;
-        while (!sortedList.isEmpty()) {
-            if (sortedList.size() % PARITY_DETERMINANT == 0) {
-                medianIndex = (sortedList.size() / PARITY_DETERMINANT) - 1;
-            } else {
-                medianIndex = sortedList.size() / PARITY_DETERMINANT;
-            }
-            queue.remove();
-            queue.add(sortedList.get(medianIndex));
-            sortedList.remove(medianIndex);
-        }
+    private int findMedianIndex() {
+        return (list.size() - 1) / PARITY_DETERMINANT;
     }
 }
