@@ -88,8 +88,7 @@ class PairStringList extends AbstractList<String> {
     public boolean addAll(Collection<? extends String> c) {
         List<String> str = new ArrayList<>(c);
         for (String s : str) {
-            list.add(s);
-            list.add(s);
+            add(s);
         }
         return true;
     }
